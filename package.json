@@ -2,11 +2,15 @@
   "name": "mini-program-operate",
   "version": "1.0.0",
   "license": "MIT",
+  "main": "electron/main.js",
+  "author": {
+    "name": "xiaolong.su",
+    "email": "xiaolong.su@xglq.com"
+  },
   "engines": {
     "node": ">= 18",
     "pnpm": ">= 9"
   },
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check build-only",
@@ -16,11 +20,70 @@
     "lint:eslint": "eslint . --fix",
     "lint:prettier": "prettier --write  \"src/**/*.{js,ts,json,tsx,css,less,scss,vue,html,md}\"",
     "release": "standard-version",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "electron": "electron .",
+    "build:win": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.xglq.app",
+    "productName": "MiniProgramOperate",
+    "compression": "maximum",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "package.json",
+      "LICENSE.txt",
+      "logo.ico",
+      "./dist/**/*",
+      "!**/node_modules/**/*.{md,mdx}",
+      "!tests/**"
+    ],
+    "asar": true,
+    "extraResources": [
+      "extra/**"
+    ],
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "icon": "build/icon.icns"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        "portable",
+        "zip"
+      ],
+      "icon": "./logo.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": true,
+      "allowElevation": true,
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "license": "LICENSE.txt"
+    },
+    "publish": {
+      "provider": "github",
+      "releaseType": "release",
+      "owner": "xiaolong.su",
+      "repo": "mini-program-operate"
+    }
   },
   "dependencies": {
     "axios": "^1.13.2",
     "clsx": "^2.1.1",
+    "electron-updater": "^6.6.2",
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
     "pinia": "^2.3.1",
@@ -47,6 +110,8 @@
     "autoprefixer": "^10.4.21",
     "cnjm-postcss-px-to-viewport": "^1.0.1",
     "commitlint": "^19.8.1",
+    "electron": "^39.2.7",
+    "electron-builder": "^26.0.12",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^9.1.2",
     "eslint-define-config": "^2.1.0",

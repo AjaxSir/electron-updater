@@ -1,16 +1,17 @@
 <!--
  * @Date: 2026-01-04 09:17:50
  * @LastEditors: xiaolong.su
- * @LastEditTime: 2026-01-04 11:03:57
+ * @LastEditTime: 2026-01-05 16:59:32
  * @Description: 
 -->
 <script setup lang="ts">
 import { reactive, onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { http } from "@/utils/http";
 import useUserStore from "@/store/modules/user";
 const route = useRoute();
 const userStore = useUserStore();
+const router = useRouter();
 
 const routeParams = route.query;
 const { openId } = routeParams as { openId: string };
@@ -54,14 +55,59 @@ onMounted(() => {
       .catch(err => {
         console.log(err, "err");
       });
+  } else {
+    userStore.setOpenId("oJdn-7JzXLnCP1cNP7Yjj-ofXt9k");
+    http
+      .request({
+        url: "/login/getLoginInfo",
+        method: "GET",
+        params: {
+          openId: userStore.openId
+        }
+      })
+      .then(res => {
+        loginInfo.value = res.data;
+        console.log(loginInfo.value, "loginInfo.value");
+      })
+      .catch(err => {
+        console.log(err, "err");
+      });
   }
 });
+const handleClick = (item: any) => {
+  switch (item.menuName) {
+    case "预购单查询":
+      router.push({
+        path: "/prepay"
+      });
+      break;
+    case "设备信息":
+      router.push({
+        path: "/device"
+      });
+      break;
+    case "订单查看":
+      router.push({
+        path: "/order"
+      });
+      break;
+    case "设备上传":
+      router.push({
+        path: "/upload"
+      });
+      break;
+    default:
+      break;
+  }
+};
 </script>
 
 <template>
   <div class="p-[6px] h-[100vh] w-full bg">
     <van-grid :column-num="3" :gutter="10">
+      <!-- <van-grid-item icon="chart-trending-o" text="数据分析" /> -->
       <van-grid-item
+        @click="handleClick(item)"
         v-for="item in loginInfo.menuList.filter((e: any) => e.menuType === 2)"
         :key="item.menuId"
         :icon="getIcon(item.menuName)"

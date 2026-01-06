@@ -26,3 +26,4 @@ coverage
 *.sw?
 
 /src/typings/components.d.ts
+release
